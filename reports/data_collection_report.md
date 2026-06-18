@@ -1,53 +1,39 @@
-# AthenaVision - Data Collection Report
+# Data Collection Report
 
 ## Project Name
 
-AthenaVision: Intelligent Occupancy Analytics System
+AthenaVision – Intelligent Vision-Based Analytics Platform for Academic Spaces
 
 ## Objective
 
-To collect occupancy data from classrooms, libraries, and study spaces using computer vision techniques.
+The objective of this phase is to collect occupancy data from different sources and store it for further processing and analysis.
 
-## Data Source
+## Data Sources
 
-* Webcam video stream
-* YOLOv8 Nano (yolov8n.pt) pretrained model
-* Person detection class (Class ID = 0)
+1. Webcam Feed
 
-## Data Collection Method
+   * Live video captured using OpenCV.
+   * YOLOv8 is used to detect people in real time.
+   * Person count is recorded every 5 seconds.
 
-The system captures live video frames from a webcam and performs person detection using YOLOv8. The number of detected people is counted and recorded at 5-second intervals.
+2. Image Dataset
 
-## Dataset Fields
+   * Images are stored in the datasets/images directory.
+   * YOLOv8 analyzes each image and detects the number of people present.
+   * Results are stored in a raw dataset.
 
-| Field        | Description               |
-| ------------ | ------------------------- |
-| Time         | Timestamp of observation  |
-| People_Count | Number of detected people |
-
-## Sample Dataset
-
-| Time     | People_Count |
-| -------- | ------------ |
-| 17:01:09 | 1            |
-| 17:01:14 | 1            |
-| 17:01:19 | 1            |
-
-## Storage Format
-
-CSV (Comma Separated Values)
-
-## Dataset Location
-
-datasets/occupancy.csv
-
-## Tools Used
+## Tools and Technologies
 
 * Python
 * OpenCV
-* Ultralytics YOLOv8
-* CSV Module
+* YOLOv8 (Ultralytics)
+* CSV Files
 
-## Outcome
+## Output Files
 
-A structured occupancy dataset was successfully generated and stored for future analytics and reporting.
+* occupancy_raw.csv
+* image_analysis_raw.csv
+
+## Result
+
+AthenaVision successfully collects occupancy data from webcam feeds and image datasets, generating raw datasets for further cleaning and processing.

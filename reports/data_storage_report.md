@@ -1,48 +1,61 @@
-# AthenaVision - Data Storage Report
+# Data Storage Report
+
+## Project Name
+
+AthenaVision – Intelligent Vision-Based Analytics Platform for Academic Spaces
 
 ## Objective
 
-Store cleaned occupancy data in a structured and retrievable format for future analytics.
+To organize and store occupancy data in a structured format for future analytics and dashboard generation.
 
-## Storage Method
+## Directory Structure
 
-CSV File Storage
+datasets/
 
-## Dataset Location
+├── rawdata/
 
-datasets/occupancy.csv
+│ ├── occupancy_raw.csv
 
-## Dataset Structure
+│ └── image_analysis_raw.csv
 
-| Column       | Description               |
-| ------------ | ------------------------- |
-| Time         | Timestamp of observation  |
-| People_Count | Number of people detected |
+│
 
-## Example Data
+├── cleaneddata/
 
-| Time     | People_Count |
-| -------- | ------------ |
-| 17:01:09 | 1            |
-| 17:01:14 | 1            |
-| 17:01:19 | 1            |
+│ └── athena_cleaned.csv
 
-## Advantages of CSV Storage
+│
 
-* Simple and lightweight
-* Human-readable
-* Compatible with Excel
-* Easy to process using Python
-* Suitable for small and medium datasets
+├── images/
 
-## Retrieval Method
+└── videos/
 
-The dataset can be accessed directly from:
+## Storage Strategy
 
-datasets/occupancy.csv
+### Raw Data Storage
 
-and processed using Python libraries such as Pandas.
+Raw datasets are stored without modification in the rawdata directory.
 
-## Outcome
+Examples:
 
-Occupancy data was successfully stored in a structured CSV format and made available for future analytics and reporting.
+* occupancy_raw.csv
+* image_analysis_raw.csv
+
+### Cleaned Data Storage
+
+After cleaning and standardization, all records are stored in a single master dataset:
+
+athena_cleaned.csv
+
+This file acts as the central data source for future analytics and dashboard modules.
+
+## Advantages
+
+* Centralized storage architecture.
+* Easier analytics and reporting.
+* Reduced data duplication.
+* Scalable for future image and video analysis modules.
+
+## Result
+
+AthenaVision now maintains a structured storage pipeline consisting of raw datasets and a unified cleaned dataset, providing a foundation for analytics and dashboard development.

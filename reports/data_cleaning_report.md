@@ -1,45 +1,48 @@
-# AthenaVision - Data Cleaning Report
+# Data Cleaning Report
+
+## Project Name
+
+AthenaVision – Intelligent Vision-Based Analytics Platform for Academic Spaces
 
 ## Objective
 
-Improve dataset quality by removing inconsistencies and unnecessary noise.
+The objective of this phase is to clean and standardize raw occupancy datasets collected from different sources.
 
-## Dataset Checked
+## Raw Datasets
 
-datasets/occupancy.csv
+1. occupancy_raw.csv
+2. image_analysis_raw.csv
 
 ## Cleaning Operations Performed
 
-### 1. Missing Value Check
+* Removal of missing values.
+* Removal of duplicate records.
+* Validation of occupancy counts.
+* Standardization of dataset structure.
 
-Result: No missing values found.
+## Unified Schema
 
-### 2. Duplicate Record Check
+All datasets are converted into the following format:
 
-Result: No duplicate records found.
+Source | File_Name | Time | People_Count
 
-### 3. Timestamp Standardization
+### Example
 
-Original Format:
-2026-06-17 16:50:20.146757
+webcam | | 17:40:22 | 1
 
-Cleaned Format:
-17:01:09
+image | classroom.webp | | 19
 
-Reason:
-Microseconds and full date information were unnecessary for occupancy monitoring.
+image | library.webp | | 10
 
-### 4. Noise Reduction
+## Tools Used
 
-Original collection frequency:
-Every frame
+* Python
+* Pandas
 
-Cleaned collection frequency:
-Every 5 seconds
+## Output File
 
-Reason:
-Reduced redundant observations and improved dataset readability.
+athena_cleaned.csv
 
-## Outcome
+## Result
 
-The dataset was verified, standardized, and prepared for analytics and reporting.
+The cleaning pipeline successfully combines multiple raw datasets into a single standardized dataset, making the data ready for analytics and visualization.
