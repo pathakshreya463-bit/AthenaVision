@@ -7,7 +7,7 @@ model = YOLO("yolov8n.pt")
 
 image_folder = "datasets/images"
 
-file = open("datasets/image_analysis.csv", "w", newline="")
+file = open("datasets/rawdata/image_analysis_raw.csv", "w", newline="")
 writer = csv.writer(file)
 
 writer.writerow(["Image_Name", "People_Count"])
@@ -43,4 +43,8 @@ for image_name in os.listdir(image_folder):
 file.close()
 
 print("\nAnalysis completed!")
-print("Results saved in datasets/image_analysis.csv")
+print("Results saved in datasets/rawdata/image_analysis_raw.csv")
+
+import os
+
+os.system("py src/Clean_data.py")

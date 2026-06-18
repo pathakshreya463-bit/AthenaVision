@@ -6,7 +6,7 @@ from datetime import datetime
 
 model = YOLO("yolov8n.pt")
 
-file = open("datasets/occupancy_raw.csv", "w", newline="")
+file = open("datasets/rawdata/occupancy_raw.csv", "w", newline="")
 writer = csv.writer(file)
 writer.writerow(["Time", "People_Count"])
 
@@ -61,3 +61,8 @@ while True:
 file.close()
 camera.release()
 cv2.destroyAllWindows()
+print("\nWebcam analysis completed!")
+
+import os
+
+os.system("py src/Clean_data.py")
