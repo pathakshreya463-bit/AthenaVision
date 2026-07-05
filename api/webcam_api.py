@@ -1,3 +1,4 @@
+
 from flask import Blueprint, jsonify
 
 from src.webcam_processor import analyze_webcam
@@ -8,9 +9,23 @@ webcam_bp = Blueprint(
 )
 
 
-@webcam_bp.route("/webcam")
+@webcam_bp.route("/webcam", methods=["POST"])
 def webcam():
 
-    result = analyze_webcam()
+    try:
 
-    return jsonify(result)
+        results = analyze_webcam()
+
+        return jsonify({
+            "status": "success",
+            "message": "Webcam analysis completed successfully.",
+            "data": results
+        }), 200
+
+    except Exception as e:
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+

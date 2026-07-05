@@ -8,6 +8,7 @@ from views.insights import show_insights_page
 from views.video import show_video_page
 
 from components.theme import load_theme
+from views.history import show_history_page
 
 # --------------------------------------------------
 # PAGE CONFIG
@@ -45,6 +46,7 @@ PAGES = [
     "📹 Live Monitoring",
     "📊 Insights",
     "🎥 Video Intelligence",
+    "🕒 Activity History",
 ]
 
 if "page" not in st.session_state:
@@ -91,6 +93,10 @@ elif page == "📊 Insights":
 
     show_insights_page()
 
+elif page == "🕒 Activity History":
+
+    show_history_page()
+    
 elif page == "🎥 Video Intelligence":
 
     show_video_page()

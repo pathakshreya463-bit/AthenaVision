@@ -1,47 +1,98 @@
+
 from flask import Blueprint, jsonify
 import pandas as pd
-
+import os
+from src.history_logger import log_activity
 analytics_bp = Blueprint(
     "analytics",
     __name__
 )
 
-@analytics_bp.route("/analytics")
+
+@analytics_bp.route("/analytics", methods=["GET"])
 def analytics():
 
-    df = pd.read_csv(
-        "datasets/cleaneddata/athena_cleaned.csv"
-    )
+    try:
 
-    webcam = df[df["Source"]=="webcam"]
-    image = df[df["Source"]=="image"]
+        file_path = "datasets/cleaneddata/athena_cleaned.csv"
 
-    response = {
+        if not os.path.exists(file_path):
 
-        "webcam":{
+            return jsonify({
 
-            "records":int(webcam["People_Count"].count()),
+                "status": "error",
 
-            "average":float(round(webcam["People_Count"].mean(),2)),
+                "message": "Cleaned dataset not found."
 
-            "maximum":int(webcam["People_Count"].max()),
+            }), 404
 
-            "minimum":int(webcam["People_Count"].min())
+        df = pd.read_csv(file_path)
 
-        },
+        webcam = df[df["Source"] == "webcam"]
+        image = df[df["Source"] == "image"]
 
-        "image":{
+        response = {
 
-            "records":int(image["People_Count"].count()),
+            "status": "success",
 
-            "average":float(round(image["People_Count"].mean(),2)),
+            "message": "Analytics generated successfully.",
 
-            "maximum":int(image["People_Count"].max()),
+            "data": {
 
-            "minimum":int(image["People_Count"].min())
+                "webcam": {
+
+                    "records": int(webcam["People_Count"].count()),
+
+                    "average": float(round(webcam["People_Count"].mean(), 2))
+                    if not webcam.empty else 0,
+
+                    "maximum": int(webcam["People_Count"].max())
+                    if not webcam.empty else 0,
+
+                    "minimum": int(webcam["People_Count"].min())
+                    if not webcam.empty else 0
+
+                },
+
+                "image": {
+
+                    "records": int(image["People_Count"].count()),
+
+                    "average": float(round(image["People_Count"].mean(), 2))
+                    if not image.empty else 0,
+
+                    "maximum": int(image["People_Count"].max())
+                    if not image.empty else 0,
+
+                    "minimum": int(image["People_Count"].min())
+                    if not image.empty else 0
+
+                }
+
+            }
 
         }
+        
+        log_activity(
 
-    }
+    module="Insights",
 
-    return jsonify(response)
+    source="Analytics",
+
+    people=0,
+
+    status="Viewed"
+
+)
+
+        return jsonify(response), 200
+
+    except Exception as e:
+
+        return jsonify({
+
+            "status": "error",
+
+            "message": str(e)
+
+        }), 500
