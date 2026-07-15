@@ -9,8 +9,17 @@ image_bp = Blueprint("image", __name__)
 def image():
 
     try:
+        from flask import request
 
-        results = analyze_images()
+        if "image" not in request.files:
+            return jsonify({
+                "status": "error",
+                "message": "No image provided."
+            }), 400
+
+        image = request.files["image"]
+
+        results = analyze_images(image)
 
         return jsonify({
             "status": "success",

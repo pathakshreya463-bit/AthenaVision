@@ -1,103 +1,106 @@
-
 from ultralytics import YOLO
-import cv2
-import csv
-import os
 from src.history_logger import log_activity
 
-# Load the model only once
+import cv2
+import numpy as np
+import csv
+import os
+
+# Load YOLO model only once
 model = YOLO("models/yolov8n.pt")
 
 
-def analyze_images():
+def analyze_images(image_file):
 
-    image_folder = "datasets/images"
-    output_file = "datasets/rawdata/image_analysis_raw.csv"
+    # ----------------------------------------
+    # Read uploaded image
+    # ----------------------------------------
 
-    valid_extensions = (".jpg", ".jpeg", ".png", ".webp")
+    image_bytes = image_file.read()
 
-    results_list = []
-    total_people = 0
-    total_images = 0
+    np_array = np.frombuffer(image_bytes, np.uint8)
 
-    # Check if the folder exists
-    if not os.path.exists(image_folder):
-        raise FileNotFoundError(f"Folder '{image_folder}' not found.")
+    image = cv2.imdecode(np_array, cv2.IMREAD_COLOR)
 
-    image_files = [
-        img for img in os.listdir(image_folder)
-        if img.lower().endswith(valid_extensions)
-    ]
+    if image is None:
 
-    if len(image_files) == 0:
         return {
-            "total_images": 0,
-            "total_people": 0,
-            "average_people": 0,
-            "results": []
+            "status": "error",
+            "message": "Invalid image."
         }
 
-    with open(output_file, "w", newline="") as file:
+    # ----------------------------------------
+    # Run YOLO
+    # ----------------------------------------
+
+    results = model(image, verbose=False)
+
+    people = 0
+
+    for box in results[0].boxes:
+
+        if int(box.cls[0]) == 0:
+
+            people += 1
+
+    # ----------------------------------------
+    # Save result to CSV
+    # ----------------------------------------
+
+    output_file = "datasets/rawdata/image_analysis_raw.csv"
+
+    file_exists = os.path.exists(output_file)
+
+    with open(output_file, "a", newline="") as file:
 
         writer = csv.writer(file)
-        writer.writerow(["Image_Name", "People_Count"])
 
-        for image_name in image_files:
+        if not file_exists:
 
-            image_path = os.path.join(image_folder, image_name)
+            writer.writerow([
+                "Image_Name",
+                "People_Count"
+            ])
 
-            image = cv2.imread(image_path)
+        writer.writerow([
+            image_file.filename,
+            people
+        ])
 
-            if image is None:
-                print(f"Could not load {image_name}")
-                continue
+    # ----------------------------------------
+    # Update History
+    # ----------------------------------------
 
-            detections = model(image, verbose=False)
+    log_activity(
 
-            person_count = 0
+        module="Image Analysis",
 
-            for box in detections[0].boxes:
+        source=image_file.filename,
 
-                if int(box.cls[0]) == 0:
-                    person_count += 1
+        people=people,
 
-            writer.writerow([image_name, person_count])
+        status="Completed"
 
-            results_list.append({
-                "image": image_name,
-                "people": person_count
-            })
-            log_activity(
+    )
 
-    module="Image Analysis",
+    # ----------------------------------------
+    # Clean Dataset
+    # ----------------------------------------
 
-    source=image_name,
-
-    people=person_count,
-
-    status="Completed"
-
-)
-
-            total_images += 1
-            total_people += person_count
-
-            print(f"{image_name} -> {person_count} people")
-
-    print("\nImage analysis completed!")
-
-    # Run data cleaning
     os.system("py src/Clean_data.py")
 
-    average_people = round(total_people / total_images, 2)
+    # ----------------------------------------
+    # Return Result
+    # ----------------------------------------
 
     return {
-        "total_images": total_images,
-        "total_people": total_people,
-        "average_people": average_people,
-        "results": results_list
+
+        "status": "success",
+
+        "image": image_file.filename,
+
+        "people": people,
+
+        "message": "Image analyzed successfully."
+
     }
-
-
-if __name__ == "__main__":
-    print(analyze_images())
